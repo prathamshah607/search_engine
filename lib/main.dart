@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wikiprathamia/data.dart';
+import 'package:wikiprathamia/webview.dart';
 import 'package:wikiprathamia/widgets.dart';
 
 void main() => runApp(const MyWidget());
@@ -61,14 +62,14 @@ class _MyWidgetState extends State<MyWidget> {
                         icon: Icon(Icons.image),
                       ),
                       Tab(
-                        icon: Icon(Icons.newspaper),
+                        icon: Icon(Icons.ondemand_video_sharp),
                       ),
                     ]),
               ),
               body: TabBarView(children: [
                 check ? URLS() : search_items(context),
                 Images(),
-                Icon(Icons.dangerous),
+                WebsiteViewer(furl: "https://www.youtube.com/results?search_query=$query", js: true)//Icon(Icons.dangerous),
               ]),
             )));
   }
