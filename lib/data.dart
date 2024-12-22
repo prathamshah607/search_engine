@@ -8,7 +8,6 @@ List<Map> imagedata = [];
 List<Map> urls = [];
 
 Future getTitlesRaw(query) async {
-  data = {};
   Map<dynamic, dynamic> mydata = {"lmao": "lmao"};
   http.Response mystring = await http.get(Uri.parse(
       "https://api.wikimedia.org/core/v1/wikipedia/en/search/title?q=$query&limit=10"));
@@ -40,8 +39,9 @@ Future getRefs(String query) async {
         url=="null" || url == "" ||
         url.startsWith("/") ||
         url.contains("wiki") ||
-        url.contains("books.google.com"))
+        url.contains("books.google.com")) {
       isvalid = false;
+    }
     return isvalid;
   }
   var refs = await http.get(Uri.parse("https://en.wikipedia.org/wiki/$query"));

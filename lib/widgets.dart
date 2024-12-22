@@ -1,26 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:wikiprathamia/data.dart';
+import 'package:wikiprathamia/webview.dart';
 
 Widget search_items(BuildContext context) {
   return ListView.builder(
     itemCount: data['pages'] != null ? data['pages'].length : 0,
     itemBuilder: (BuildContext context, int index) {
-      String image = data['pages'][index]['thumbnail'] != null
-          ? data['pages'][index]['thumbnail']['url']
+      String image = data['pages']![index]['thumbnail'] != null
+          ? data['pages']![index]['thumbnail']['url']
               .toString()
               .replaceFirst(RegExp(r'//'), "https://")
-          : "https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-image-512.png";
+          : "https://static-00.iconduck.com/assets.00/search-icon-2044x2048-psdrpqwp.png";
       return ListTile(
           onTap: () async {
-            await getRefs(data['pages'][index]['title']);
+            await getRefs(data['pages']![index]['title']);
             Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => URLS(),
                 ));
           },
-          title: Text(data['pages'][index]['title']),
-          subtitle: Text(data["pages"][index]['description'] ?? ""),
+          title: Text(data['pages']![index]['title']),
+          subtitle: Text(data["pages"]![index]['description'] ?? ""),
           leading: SizedBox(
             height: 30,
             width: 30,
@@ -85,6 +86,9 @@ class _MyWidgetState extends State<URLS> {
               child: Padding(
                   padding: const EdgeInsets.all(3),
                   child: ListTile(
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => WebsiteViewer(furl: urls[index].values.first.toString(), js: false)));
+                    },
                     //leading: Image.network(
                     //"https://www.google.com/s2/favicons?domain_url=${urls[index].values.first}",
                     //),

@@ -14,8 +14,6 @@ class MyWidget extends StatefulWidget {
 
 class _MyWidgetState extends State<MyWidget> {
 
-  bool check = false;
-
   @override
   void initState() {
     super.initState();
@@ -33,7 +31,6 @@ class _MyWidgetState extends State<MyWidget> {
               appBar: AppBar(
                 title: TextField(
                   onChanged: (value) async {
-                    check = false;
                     query = value;
                     await getTitlesRaw(value);
                     setState(() {});
@@ -42,8 +39,6 @@ class _MyWidgetState extends State<MyWidget> {
                     query = value;
                     await getTitlesRaw(value);
                     await getImages(query);
-                    check = (data['pages'][0]['title'].toLowerCase() == query.toLowerCase());
-                    if(check) await getRefs(data['pages'][0]['title']);
                     setState(() {});
                   },
                 ),
@@ -67,7 +62,7 @@ class _MyWidgetState extends State<MyWidget> {
                     ]),
               ),
               body: TabBarView(children: [
-                check ? URLS() : search_items(context),
+                search_items(context),
                 Images(),
                 WebsiteViewer(furl: "https://www.youtube.com/results?search_query=$query", js: true)//Icon(Icons.dangerous),
               ]),

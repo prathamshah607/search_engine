@@ -12,7 +12,6 @@ class WebsiteViewer extends StatefulWidget {
 
 class _WebsiteViewerState extends State<WebsiteViewer> {
   late final WebViewController controller;
-
   Set<String> selection = {};
 
   @override
@@ -31,12 +30,24 @@ class _WebsiteViewerState extends State<WebsiteViewer> {
       appBar: AppBar(
         title: SegmentedButton(
           multiSelectionEnabled: false,
-          segments: [
+          segments: const [
             ButtonSegment(value: "false", label: Text("No JS")),
             ButtonSegment(value: "true", label: Text("Full JS")),
           ],
-          onSelectionChanged:(p0) {
-            print(p0);
+          onSelectionChanged:(p0) async {
+            selection = p0;
+            if(p0.first == "false")
+            {
+              controller.setJavaScriptMode(JavaScriptMode.disabled);
+              print("Javascript has been disabled  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            }
+            else if (p0.first == "true") {
+            controller.setJavaScriptMode(JavaScriptMode.unrestricted);
+            print("Javascript has been enabled!!!!!!!!!!!!!!!!!!!!!!!!!!"); }
+            controller.currentUrl().then((value) {
+              controller.loadRequest(Uri.parse(value!));
+            });
+            setState(() {});
           },
           selected: selection,
         ),
