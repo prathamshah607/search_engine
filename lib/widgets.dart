@@ -79,31 +79,44 @@ class _MyWidgetState extends State<URLS> {
     return Scaffold(
       appBar: AppBar(title: const Text("Directory")),
       body: ListView.builder(
-          itemCount: urls.length,
-          itemBuilder: (BuildContext context, int index) {
-            bool insecure = urls[index].values.first.toString().contains("http://");
-            return Card(
-              child: Padding(
-                  padding: const EdgeInsets.all(3),
-                  child: ListTile(
-                    onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => WebsiteViewer(furl: urls[index].values.first.toString(), js: false)));
-                    },
-                    //leading: Image.network(
-                    //"https://www.google.com/s2/favicons?domain_url=${urls[index].values.first}",
-                    //),
-                    title: Text(
-                      urls[index].keys.first ?? urls[index].values.first,
-                      style:
-                          const TextStyle(color: Colors.blueGrey, fontSize: 20),
-                    ),
-                    subtitle: Text(
-                      urls[index].values.first,
-                      style: TextStyle(color: insecure ? Colors.red : Colors.green, fontSize: 12),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  )),
-            );
+          itemCount: urls.length + 1,
+          itemBuilder: (BuildContext context, int count) {
+            int index = count - 1;
+            bool insecure = index >= 0
+                ? urls[index].values.first.toString().contains("http://")
+                : false;
+            return index > -1
+                ? Card(
+                    child: Padding(
+                        padding: const EdgeInsets.all(3),
+                        child: ListTile(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => WebsiteViewer(
+                                        furl:
+                                            urls[index].values.first.toString(),
+                                        js: false)));
+                          },
+                          //leading: Image.network(
+                          //"https://www.google.com/s2/favicons?domain_url=${urls[index].values.first}",
+                          //),
+                          title: Text(
+                            urls[index].keys.first ?? urls[index].values.first,
+                            style: const TextStyle(
+                                color: Colors.blueGrey, fontSize: 20),
+                          ),
+                          subtitle: Text(
+                            urls[index].values.first,
+                            style: TextStyle(
+                                color: insecure ? Colors.red : Colors.green,
+                                fontSize: 12),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        )),
+                  )
+                : DescriptionWidget();
           }),
     );
   }
@@ -134,4 +147,8 @@ class ImageD extends StatelessWidget {
           )),
     );
   }
+}
+
+Widget DescriptionWidget (){
+  return Container();
 }
