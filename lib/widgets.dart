@@ -17,7 +17,7 @@ Widget search_items(BuildContext context) {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => URLS(),
+                  builder: (context) => const URLS(),
                 ));
           },
           title: Text(data['pages']![index]['title']),
@@ -89,34 +89,13 @@ class _MyWidgetState extends State<URLS> {
                 ? Card(
                     child: Padding(
                         padding: const EdgeInsets.all(3),
-                        child: ListTile(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => WebsiteViewer(
-                                        furl:
-                                            urls[index].values.first.toString(),
-                                        js: false)));
-                          },
-                          //leading: Image.network(
-                          //"https://www.google.com/s2/favicons?domain_url=${urls[index].values.first}",
-                          //),
-                          title: Text(
+                        child: SearchTile(
                             urls[index].keys.first ?? urls[index].values.first,
-                            style: const TextStyle(
-                                color: Colors.blueGrey, fontSize: 20),
-                          ),
-                          subtitle: Text(
                             urls[index].values.first,
-                            style: TextStyle(
-                                color: insecure ? Colors.red : Colors.green,
-                                fontSize: 12),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        )),
-                  )
-                : DescriptionWidget();
+                            context,
+                            false,
+                            insecure)))
+                : DescriptionWidget(context);
           }),
     );
   }
@@ -149,6 +128,75 @@ class ImageD extends StatelessWidget {
   }
 }
 
-Widget DescriptionWidget (){
-  return Container();
+Widget DescriptionWidget(BuildContext context) {
+  return Padding(
+    padding: const EdgeInsets.all(8.0),
+    child: Card(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 20,
+              ),
+            ),
+            Text(
+              "${description['description']}",
+              style: TextStyle(
+                fontSize: 16,
+              ),
+            ),
+            Container(
+              height: MediaQuery.of(context).size.height / 5,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: description['images']?.length,
+                itemBuilder: (context, index) {
+                  return InkWell(
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => ImageD(title: description['titles'][index], url: description['images'][index], date: "")));
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(2.0),
+                        child: Image.network(description['images'][index]),
+                      ));
+                },
+              ),
+            ),
+            Divider(),
+            Text("${description['extract']}"),
+            SearchTile(title, description['source'], context, true, false)
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
+Widget SearchTile(
+    String title, String url, BuildContext context, bool js, bool insecure) {
+  return ListTile(
+    onTap: () {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => WebsiteViewer(furl: url, js: js)));
+    },
+    //leading: Image.network(
+    //"https://www.google.com/s2/favicons?domain_url=${urls[index].values.first}",
+    //),
+    title: Text(
+      title,
+      style: const TextStyle(color: Colors.blueGrey, fontSize: 20),
+    ),
+    subtitle: Text(
+      url,
+      style:
+          TextStyle(color: insecure ? Colors.red : Colors.green, fontSize: 12),
+      overflow: TextOverflow.ellipsis,
+    ),
+  );
 }

@@ -24,6 +24,7 @@ class _MyWidgetState extends State<MyWidget> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
         theme: ThemeData(
+          colorSchemeSeed: Colors.green
         ),
         home: DefaultTabController(
             length: 3,
