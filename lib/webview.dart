@@ -39,11 +39,10 @@ class _WebsiteViewerState extends State<WebsiteViewer> {
             if(p0.first == "false")
             {
               controller.setJavaScriptMode(JavaScriptMode.disabled);
-              print("Javascript has been disabled  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
             }
             else if (p0.first == "true") {
             controller.setJavaScriptMode(JavaScriptMode.unrestricted);
-            print("Javascript has been enabled!!!!!!!!!!!!!!!!!!!!!!!!!!"); }
+            }
             controller.currentUrl().then((value) {
               controller.loadRequest(Uri.parse(value!));
             });

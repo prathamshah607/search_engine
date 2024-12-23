@@ -77,7 +77,7 @@ class _MyWidgetState extends State<URLS> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Directory")),
+      appBar: AppBar(),
       body: ListView.builder(
           itemCount: urls.length + 1,
           itemBuilder: (BuildContext context, int count) {

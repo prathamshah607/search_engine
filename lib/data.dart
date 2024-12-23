@@ -31,23 +31,38 @@ Future getImages(String query) async {
   });
 }
 
-Future getRefs(String query) async {
-  urls = [];
-  bool valid(String url, String title) {
+bool valid(String url, String title) {
     bool isvalid = true;
     if (url.startsWith("#") ||
+    title.toLowerCase() == "the original" ||
         url=="null" || url == "" ||
         url.startsWith("/") ||
         url.contains("wiki") ||
-        url.contains("books.google.com")) {
+        url.contains("//doi.org") || url.contains("//ui.adsabs.harvard.edu") || url.contains("books.google.com/books?id=") || url.contains("//search.worldcat.org/issn/") || url.contains("//geohack.toolforge.org/geohack.php?pagename=") ||
+        double.tryParse(title.replaceAll("/", "").replaceAll(".", "")) != null
+        ) {
       isvalid = false;
     }
     return isvalid;
   }
+
+int sortcondition (String url1, String title1, String url2, String title2, String query)
+{
+  return 1;
+}
+
+String modified_url (String url) {
+    if(url.contains("//web.archive.org/web/")){
+      return "htt${url.split("htt").last}";
+    }
+    else return url;
+}
+
+Future getRefs(String query) async {
+  urls = [];
   var refs = await http.get(Uri.parse("https://en.wikipedia.org/wiki/$query"));
-  parse(refs.body).getElementsByTagName("a").reversed.forEach(
+  parse(refs.body).getElementsByTagName("a").forEach(
     (element) async {
-      print(element);
       var url = element.attributes['href'].toString();
       var title = parse(element.innerHtml)
           .documentElement!
@@ -56,7 +71,7 @@ Future getRefs(String query) async {
           .replaceAll("https://", "")
           .replaceAll("http://", "");
       if (valid(url, title)) {
-        urls.add({title: url});
+        urls.add({title: modified_url(url)});
       }
     },
   );
