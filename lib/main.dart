@@ -63,7 +63,9 @@ class _MyWidgetState extends State<MyWidget> {
                     ]),
               ),
               body: TabBarView(children: [
-                search_items(context),
+                query != "" ? search_items(context) : Center(
+                  child: Text("Go on! Look something up!"),
+                ),
                 Images(),
                 WebsiteViewer(furl: "https://www.youtube.com/results?search_query=$query", js: true)//Icon(Icons.dangerous),
               ]),

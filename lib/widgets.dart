@@ -77,7 +77,20 @@ class _MyWidgetState extends State<URLS> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        actions: [
+          IconButton(onPressed: () async {
+            await getImages(title);
+            setState(() {});
+            Navigator.push(context, MaterialPageRoute(builder: (context) =>
+            Scaffold(
+              appBar: AppBar(title: Text("Images for $title"),),
+              body: Images(),
+            )
+            ));
+          }, icon: Icon(Icons.image))
+        ],
+      ),
       body: ListView.builder(
           itemCount: urls.length + 1,
           itemBuilder: (BuildContext context, int count) {

@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter/material.dart';
 import 'package:html/parser.dart';
 import 'package:http/http.dart' as http;
 
@@ -55,7 +54,6 @@ bool valid(String url, String title) {
 
 int sortcondition(Map item1, Map item2) {
   String title2 = item2.keys.first;
-  String title1 = item1.keys.first;
   int swapornot = -1;
   if (title2.toLowerCase() == "official website") {
     swapornot = 1;
@@ -90,16 +88,16 @@ Future getRefs(String query) async {
     },
   );
   urls.sort((a, b) => sortcondition(a, b));
-  await wikiinfosnippet(title);
+  await wikiinfosnippet();
 
 }
 
-Future wikiinfosnippet(String t) async {
-  var wikidata = await http.get(Uri.parse("https://en.wikipedia.org/api/rest_v1/page/summary/${t.replaceAll(" ", "_")}"));
+Future wikiinfosnippet() async {
+  var wikidata = await http.get(Uri.parse("https://en.wikipedia.org/api/rest_v1/page/summary/${title.replaceAll(" ", "_")}"));
   Map jsondata = json.decode(wikidata.body);
   String pageId = jsondata['pageid'].toString();
   var images = await http.get(Uri.parse(
-      "https://en.wikipedia.org/w/api.php?action=query&titles=$t&format=json&prop=images"));
+      "https://en.wikipedia.org/w/api.php?action=query&titles=$title&format=json&prop=images"));
   
   List titles = [];
   List imageurls = [];
