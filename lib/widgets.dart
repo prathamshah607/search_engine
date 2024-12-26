@@ -142,9 +142,7 @@ class ImageD extends StatelessWidget {
 }
 
 Widget DescriptionWidget(BuildContext context) {
-  return Padding(
-    padding: const EdgeInsets.all(8.0),
-    child: Card(
+  return Card(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
@@ -185,7 +183,6 @@ Widget DescriptionWidget(BuildContext context) {
           ],
         ),
       ),
-    ),
   );
 }
 
