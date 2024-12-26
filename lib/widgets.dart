@@ -79,16 +79,21 @@ class _MyWidgetState extends State<URLS> {
     return Scaffold(
       appBar: AppBar(
         actions: [
-          IconButton(onPressed: () async {
-            await getImages(title);
-            setState(() {});
-            Navigator.push(context, MaterialPageRoute(builder: (context) =>
-            Scaffold(
-              appBar: AppBar(title: Text("Images for $title"),),
-              body: Images(),
-            )
-            ));
-          }, icon: Icon(Icons.image))
+          IconButton(
+              onPressed: () async {
+                await getImages(title);
+                setState(() {});
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => Scaffold(
+                              appBar: AppBar(
+                                title: Text("Images for $title"),
+                              ),
+                              body: Images(),
+                            )));
+              },
+              icon: Icon(Icons.image))
         ],
       ),
       body: ListView.builder(
@@ -133,9 +138,11 @@ class ImageD extends StatelessWidget {
       body: InteractiveViewer(
           minScale: 0.001,
           maxScale: 10,
-          child: Image.network(
-            url,
-            fit: BoxFit.fitHeight,
+          child: Container(
+            child: Image.network(
+              url,
+              fit: BoxFit.fitHeight,
+            ),
           )),
     );
   }
@@ -143,46 +150,52 @@ class ImageD extends StatelessWidget {
 
 Widget DescriptionWidget(BuildContext context) {
   return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 20,
-              ),
+    child: Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 20,
             ),
-            Text(
-              "${description['description']}",
-              style: TextStyle(
-                fontSize: 16,
-              ),
+          ),
+          Text(
+            "${description['description']}",
+            style: TextStyle(
+              fontSize: 16,
             ),
-            Container(
-              height: MediaQuery.of(context).size.height / 5,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: description['images']?.length,
-                itemBuilder: (context, index) {
-                  return InkWell(
-                      onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => ImageD(title: description['titles'][index], url: description['images'][index], date: "")));
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.all(2.0),
-                        child: Image.network(description['images'][index]),
-                      ));
-                },
-              ),
+          ),
+          Container(
+            height: MediaQuery.of(context).size.height / 5,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: description['images']?.length,
+              itemBuilder: (context, index) {
+                return InkWell(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ImageD(
+                                  title: description['titles'][index],
+                                  url: description['images'][index],
+                                  date: "")));
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(2.0),
+                      child: Image.network(description['images'][index]),
+                    ));
+              },
             ),
-            Divider(),
-            Text("${description['extract']}"),
-            SearchTile(title, description['source'], context, true, false)
-          ],
-        ),
+          ),
+          Divider(),
+          Text("${description['extract']}"),
+          SearchTile(title, description['source'], context, true, false)
+        ],
       ),
+    ),
   );
 }
 
@@ -195,9 +208,7 @@ Widget SearchTile(
           MaterialPageRoute(
               builder: (context) => WebsiteViewer(furl: url, js: js)));
     },
-    //leading: Image.network(
-    //"https://www.google.com/s2/favicons?domain_url=${urls[index].values.first}",
-    //),
+    //leading: Image.network("https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=$url&size=16"),
     title: Text(
       title,
       style: const TextStyle(color: Colors.blueGrey, fontSize: 20),
