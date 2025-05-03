@@ -53,6 +53,7 @@ Widget Images() {
                         title: imagedata[index]['title'],
                         url: imagedata[index]['fullsrc'],
                         date: imagedata[index]['timestamp'],
+                        snippet: imagedata[index]['snippet'],
                       )));
         },
         child: Expanded(
@@ -93,7 +94,7 @@ class _MyWidgetState extends State<URLS> {
                               body: Images(),
                             )));
               },
-              icon: Icon(Icons.image))
+              icon: const Icon(Icons.image))
         ],
       ),
       body: ListView.builder(
@@ -113,7 +114,7 @@ class _MyWidgetState extends State<URLS> {
                             context,
                             false,
                             insecure)))
-                : DescriptionWidget(context);
+                : DescriptionWidget(context, description);
           }),
     );
   }
@@ -123,8 +124,13 @@ class ImageD extends StatelessWidget {
   final String url;
   final String title;
   final String date;
+  final String snippet;
   const ImageD(
-      {super.key, required this.title, required this.url, required this.date});
+      {super.key,
+      required this.title,
+      required this.url,
+      required this.date,
+      required this.snippet});
 
   @override
   Widget build(BuildContext context) {
@@ -135,20 +141,26 @@ class ImageD extends StatelessWidget {
           Text(date.split("T").first),
         ],
       ),
-      body: InteractiveViewer(
-          minScale: 0.001,
-          maxScale: 10,
-          child: Container(
-            child: Image.network(
-              url,
-              fit: BoxFit.fitHeight,
-            ),
-          )),
+      body: Column(
+        children: [
+          InteractiveViewer(
+              minScale: 0.001,
+              maxScale: 10,
+              child: Container(
+                child: Image.network(
+                  url,
+                  fit: BoxFit.fitHeight,
+                ),
+              )),
+          const Divider(),
+          Text(snippet)
+        ],
+      ),
     );
   }
 }
 
-Widget DescriptionWidget(BuildContext context) {
+Widget DescriptionWidget(BuildContext context, Map description) {
   return Card(
     child: Padding(
       padding: const EdgeInsets.all(8.0),
@@ -156,18 +168,18 @@ Widget DescriptionWidget(BuildContext context) {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            title,
-            style: TextStyle(
+            description['title'] ?? "${description['description']}",
+            style: const TextStyle(
               fontSize: 20,
             ),
           ),
           Text(
             "${description['description']}",
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 16,
             ),
           ),
-          Container(
+          SizedBox(
             height: MediaQuery.of(context).size.height / 5,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
@@ -179,9 +191,11 @@ Widget DescriptionWidget(BuildContext context) {
                           context,
                           MaterialPageRoute(
                               builder: (context) => ImageD(
-                                  title: description['titles'][index],
-                                  url: description['images'][index],
-                                  date: "")));
+                                    title: description['titles'][index],
+                                    url: description['images'][index],
+                                    date: "",
+                                    snippet: "",
+                                  )));
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(2.0),
@@ -190,9 +204,9 @@ Widget DescriptionWidget(BuildContext context) {
               },
             ),
           ),
-          Divider(),
+          const Divider(),
           Text("${description['extract']}"),
-          SearchTile(title, description['source'], context, true, false)
+          SearchTile(description['title'], description['source'], context, true, false)
         ],
       ),
     ),
@@ -220,4 +234,20 @@ Widget SearchTile(
       overflow: TextOverflow.ellipsis,
     ),
   );
+}
+
+class NewsPage extends StatelessWidget {
+  const NewsPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("Current Affairs and News")),
+      body: ListView.builder(
+        itemCount: newsitems.length,
+        itemBuilder: (BuildContext context, int count) {
+        return DescriptionWidget(context, newsitems[count]);
+      }),
+    );
+  }
 }

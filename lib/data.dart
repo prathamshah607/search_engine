@@ -8,6 +8,7 @@ List<Map> imagedata = [];
 List<Map> urls = [];
 Map description = {};
 String title = "";
+List newsitems = [];
 
 Future getTitlesRaw(query) async {
   Map<dynamic, dynamic> mydata = {"lmao": "lmao"};
@@ -29,6 +30,7 @@ Future getImages(String query) async {
       "fullsrc": imagest[c]["imageinfo"][0]['url'] ?? "",
       "title": imagest[c]["title"] ?? "",
       "timestamp": imagest[c]["touched"] ?? "",
+      "snippet": imagest[c]['snippet'] ?? imagest[c]["title"] ?? "",
     });
   }
 }
@@ -89,23 +91,27 @@ Future getRefs(String query) async {
   );
   urls.sort((a, b) => sortcondition(a, b));
   await wikiinfosnippet();
-
 }
 
 Future wikiinfosnippet() async {
-  var wikidata = await http.get(Uri.parse("https://en.wikipedia.org/api/rest_v1/page/summary/${title.replaceAll(" ", "_")}"));
+  var wikidata = await http.get(Uri.parse(
+      "https://en.wikipedia.org/api/rest_v1/page/summary/${title.replaceAll(" ", "_")}"));
   Map jsondata = json.decode(wikidata.body);
   String pageId = jsondata['pageid'].toString();
   var images = await http.get(Uri.parse(
       "https://en.wikipedia.org/w/api.php?action=query&titles=$title&format=json&prop=images"));
-  
+
   List titles = [];
   List imageurls = [];
-  json.decode(images.body)['query']['pages'][pageId]['images'].toList().forEach((e) {
+  json
+      .decode(images.body)['query']['pages'][pageId]['images']
+      .toList()
+      .forEach((e) {
     titles.add(e['title']);
   });
   imageurls.add(json.decode(wikidata.body)['originalimage']['source']);
-  var s = await http.get(Uri.parse("https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url&titles=${titles.where((element) => element.toString().toLowerCase().startsWith("file")).toString().replaceAll(", ", "|").substring(1, titles.where((element) => element.toString().toLowerCase().startsWith("file")).toString().replaceAll(", ", "|").length - 1)}"));
+  var s = await http.get(Uri.parse(
+      "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url&titles=${titles.where((element) => element.toString().toLowerCase().startsWith("file")).toString().replaceAll(", ", "|").substring(1, titles.where((element) => element.toString().toLowerCase().startsWith("file")).toString().replaceAll(", ", "|").length - 1)}"));
   json.decode(s.body)['query']['pages'].keys.forEach((element) {
     if (json
                 .decode(s.body)['query']['pages'][element]
@@ -120,14 +126,37 @@ Future wikiinfosnippet() async {
             .toString()
             .toLowerCase()
             .contains(".png")) {
-      imageurls.add(json.decode(s.body)['query']['pages'][element]['imageinfo'][0]['url']);
+      imageurls.add(json.decode(s.body)['query']['pages'][element]['imageinfo']
+          [0]['url']);
     }
   });
   description = {
-    "description" : jsondata['description'],
-    "extract" : jsondata['extract'],
-    "source" : jsondata['content_urls']['desktop']['page'],
-    "images" : imageurls,
-    "titles" : titles
+    "description": jsondata['description'],
+    "extract": jsondata['extract'],
+    "source": jsondata['content_urls']['desktop']['page'],
+    "images": imageurls,
+    "titles": titles,
+    "title": title
   };
+}
+
+Future getNews(String query) async {
+  List fullnewsitems = [];
+  List<Map> cleaned = [];
+  if (query != "") {
+    http.Response mystring = await http.get(Uri.parse(
+        "https://api.wikimedia.org/core/v1/wikipedia/en/search/page?q=$query&limit=6"));
+    fullnewsitems = jsonDecode(mystring.body)['pages'];
+    for (var content in fullnewsitems) {
+      cleaned.add({
+        "title": content['title'].toString().replaceAll("_", " "),
+        "extract": content['excerpt'],
+        "description": content['description'],
+        "images": "https:${content['thumbnail']?['url']}",
+        "titles" : [""],
+        "source" : "https://en.wikipedia.org/wiki/${content['key']}"
+      });
+    }
+    newsitems = cleaned;
+  }
 }

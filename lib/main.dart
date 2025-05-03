@@ -15,8 +15,15 @@ class MyWidget extends StatefulWidget {
 class _MyWidgetState extends State<MyWidget> {
   int navbarindex = 0;
 
+  loadnews_init()async{
+    await getNews("manmohan singh");
+    print(newsitems);
+    setState(() {});
+  }
+
   @override
   void initState() {
+    loadnews_init();
     super.initState();
   }
 
@@ -24,7 +31,7 @@ class _MyWidgetState extends State<MyWidget> {
   Widget build(BuildContext context) {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(colorSchemeSeed: Colors.green),
+        theme: ThemeData(colorSchemeSeed: Colors.teal),
         home: Scaffold(
           bottomNavigationBar: BottomNavigationBar(
               currentIndex: navbarindex,
@@ -33,7 +40,7 @@ class _MyWidgetState extends State<MyWidget> {
                   navbarindex = value;
                 });
               },
-              items: [
+              items: const [
                 BottomNavigationBarItem(icon: Icon(Icons.search), label: "Keyword"),
                 BottomNavigationBarItem(icon: Icon(Icons.image), label: "Images"),
                 BottomNavigationBarItem(icon: Icon(Icons.play_arrow), label: "Videos"),
@@ -56,11 +63,7 @@ class _MyWidgetState extends State<MyWidget> {
           body: [
             query != ""
                 ? search_items(context)
-                : Center(
-                    child: Text("KeyNote", style: TextStyle(
-                      fontSize: 25
-                    ),),
-                  ),
+                : NewsPage(),
             Images(),
             WebsiteViewer(
                 furl: "https://www.youtube.com/results?search_query=$query",
